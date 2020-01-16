@@ -1,0 +1,36 @@
+{
+  "name": "Gubi",
+  "version": "1.0.0",
+  "description": "Discord AI bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdulazizSaud/Gubi.git"
+  },
+  "keywords": [
+    "Discord",
+    "bot",
+    "javascript",
+    "nodejs",
+    "ai"
+  ],
+  "author": "Abdulaziz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AbdulazizSaud/Gubi"
+  },
+  "homepage": "https://github.com/AbdulazizSaud/Gubi",
+  "dependencies": {
+    "@google-cloud/speech": "^3.5.4",
+    "@google-cloud/text-to-speech": "^2.1.2",
+    "apiai": "^4.0.3",
+    "discord.js": "^11.3.0",
+    "ffmpeg": "0.0.4",
+    "pino": "^5.15.0",
+    "pino-pretty": "^3.5.0",
+    "request": "^2.88.0"
+  }
+}
