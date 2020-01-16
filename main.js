@@ -2,8 +2,6 @@
 var tokens = require('./config').tokens
 var apiaiApp = require('apiai')(tokens.ai_api_token);
 const Discord = require("discord.js");
-agent_ip = '192.168.36.221'
-
 var bot_nmap = require('./commands/bot-nmap-command')
 // Initialize Discord Bot
 const client = new Discord.Client();
@@ -15,6 +13,7 @@ const pino = require('pino')({
 
 
   
+//domain_python_server = '192.168.36.221:5000'
 
   
 // @ts-ignore

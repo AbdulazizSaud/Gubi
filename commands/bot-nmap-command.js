@@ -1,5 +1,6 @@
 var req = require('request')
 
+var config = require('../config').config
 
 module.exports.initCommand = function(sender,text,messageChannel,Discord){
 
@@ -17,7 +18,7 @@ module.exports.initCommand = function(sender,text,messageChannel,Discord){
         messageChannel.send('Wait');
 
         
-        req('http://'+agent_ip+':5000/nmap/'+ip,function(error,response,body){
+        req('http://'+config.domain_python_server+'/nmap/'+ip,function(error,response,body){
                 try{
                     result = JSON.parse(body).scan[ip]['tcp']
                     console.log(result)
