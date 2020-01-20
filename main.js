@@ -2,6 +2,8 @@
 var tokens = require('./config').tokens
 var apiaiApp = require('apiai')(tokens.ai_api_token);
 const Discord = require("discord.js");
+const _request_ = require('request')
+const utf8 = require('utf8')
 var bot_nmap = require('./commands/bot-nmap-command')
 // Initialize Discord Bot
 const client = new Discord.Client();
@@ -12,8 +14,10 @@ const pino = require('pino')({
   })
 
 
-  
-//domain_python_server = '192.168.36.221:5000'
+
+
+const langDetectLib = require('languagedetect')
+const langDetect = new langDetectLib()
 
   
 // @ts-ignore
@@ -43,15 +47,39 @@ client.on('message', message => {
     // Check if the message starts with the !
     if (tag === 'gubi' || tag === tokens.bot_id) {
         // Get a substring to exclude the ! from the message
-        var text = message.content.replace(tokens.bot_id,'');
+        var text = message.content.replace(tokens.bot_id,'').trim();
 
-        text = text.trim().toLowerCase()
-        console.log(text)
+        englishRgex = /^[A-Za-z0-9]*$/
+        isEnglish  = englishRgex.test(text)
+
+        if(!isEnglish){
+            var encode_text = encodeURI(text)
+            var url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=${tokens.yandex_api}&text=${encode_text}&lang=ar-en`
+
+            _request_(url,(err,response,body)=> {
+                if(err){
+                    return console.log(err)
+                } else{
+                    bodyJson = JSON.parse(body)
+                    if(bodyJson.code == 200){
+                       text = bodyJson.text[0] 
+                       responseBot(message,text)
+                    }
+                }
+            })
+            
+            return
+        } else text = text.trim().toLowerCase()
+
+        
+
+
 
         if(text.startsWith('nmap')){
         bot_nmap.initCommand(message.author,text,message.channel,Discord)
         return
         }
+
         if (text.startsWith('join') || text.startsWith('leave')) {
 
             const voiceChannel = message.member.voiceChannel;
@@ -80,7 +108,7 @@ client.on('message', message => {
             
             voiceChannel.join()
                 .then(connection => {
-
+                    console.log('test')
                 })
                 .catch(error => {
                     console.log(error)
@@ -97,54 +125,74 @@ client.on('message', message => {
 
         }
 
-        // Parse the text to the API.ai
-        var request = apiaiApp.textRequest(text, {
-            sessionId: '<any-unique-name>'
-        });
+        responseBot(message,text)
 
-        // Listen to a response from API.ai
-        request.on('response', (response) => {
-            // Reply the user with the given response
-            if(isJoined)
-            {
-                message.channel.send(response.result.fulfillment.speech, { tts: true });
-            } else
-            message.reply(response.result.fulfillment.speech);
-        });
-
-        // Listen for any errors in the response
-        request.on('error', (error) => {
-            // Tell the user that an error happened
-            message.reply("Oops! There is an error in our end")
-        });
-
-        // End the request to avoid wasting memory
-        request.end();
     }
 });
 
 
 
+client.on('presenceUpdate',async(oldPer,newPer) =>{
 
-async function join(voiceChannel, textChannel) {
- pino.trace('Joining voice channel...')
- const voiceConnection = await voiceChannel.join()
- const receiver = voiceConnection.createReceiver()
- pino.info('Voice channel joined.')
+    const membere = newPer.member
+    const memberVoiceChannels = member.voice.channel
 
- // Every 60 seconds, report API usage and money spent.
- let lastReportedUsage = 0
- setInterval(() => {
-   if (totalBilledThisSession === lastReportedUsage) {
-     return
-   }
-   lastReportedUsage = totalBilledThisSession
-   const money = (lastReportedUsage / 15 * 0.006).toFixed(3)
-   textChannel.send(
-     `Google Cloud Speech API usage: ${lastReportedUsage} seconds (\$${money})`
-   )
- }, 60000)
+    if(!newPer || newPer.activity || !newPer.activity.name || !memberVoiceChannels)
+        return
+
+    connection = await memberVoiceChannels.join()   
+    
+    connection.on('speaking', (user, speaking)=>{
+        if(speaking)
+        console.log(`i'm listeining to ${user.username}`)
+    })
+
+});
+
+
+
+function responseBot(message,text) {
+    
+            // Parse the text to the API.ai
+            var request = apiaiApp.textRequest(text, {
+                sessionId: '<any-unique-name>'
+            });
+
+            
+            // Listen to a response from API.ai
+            request.on('response', (response) => {
+                // Reply the user with the given response
+                if(isJoined)
+                {
+                    message.channel.send(response.result.fulfillment.speech, { tts: true });
+                } else
+                message.reply(response.result.fulfillment.speech);
+            });
+    
+            // Listen for any errors in the response
+            request.on('error', (error) => {
+                // Tell the user that an error happened
+                message.reply("Oops! There is an error in our end")
+            });
+    
+            // End the request to avoid wasting memory
+            request.end();
+            
 }
+
+function getHighestPersentage(arrayLangs){
+    highest = arrayLangs[0]
+    console.log(arrayLangs)
+
+    arrayLangs.forEach(element => {
+        if(element[1] > highest[1])
+        highest = element
+    });
+
+    console.log(highest)
+
+}
+
 
 // Login into the Discord API
 client.login(tokens.discord_api_token);
