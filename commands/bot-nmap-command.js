@@ -17,11 +17,9 @@ module.exports.initCommand = function(sender,text,messageChannel,Discord){
         messageChannel.send('Scaning '+ip);
         messageChannel.send('Wait');
 
-        
         req('http://'+config.domain_python_server+'/nmap/'+ip,function(error,response,body){
                 try{
                     result = JSON.parse(body).scan[ip]['tcp']
-                    console.log(result)
                     embed = new Discord.RichEmbed()
                     .setColor('#0099ff')
                     .setTitle('Resultuuuuuuuu')

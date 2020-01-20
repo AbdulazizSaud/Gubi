@@ -7,5 +7,5 @@ module.exports.tokens = {
 }
 
 module.exports.config = {
-    'domain_python_server':"gubi.freedynamicdns.net:5000"
+    'domain_python_server':"192.168.36.221:5000"
 }

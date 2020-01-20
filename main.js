@@ -49,8 +49,15 @@ client.on('message', message => {
         // Get a substring to exclude the ! from the message
         var text = message.content.replace(tokens.bot_id,'').trim();
 
+        if(text.startsWith('nmap')){
+            bot_nmap.initCommand(message.author,text,message.channel,Discord)
+            return
+            }
+
+            
         englishRgex = /^[A-Za-z0-9]*$/
         isEnglish  = englishRgex.test(text)
+        console.log(isEnglish)
 
         if(!isEnglish){
             var encode_text = encodeURI(text)
@@ -69,16 +76,13 @@ client.on('message', message => {
             })
             
             return
-        } else text = text.trim().toLowerCase()
+        } else 
+        text = text.trim().toLowerCase()
 
         
 
 
 
-        if(text.startsWith('nmap')){
-        bot_nmap.initCommand(message.author,text,message.channel,Discord)
-        return
-        }
 
         if (text.startsWith('join') || text.startsWith('leave')) {
 
