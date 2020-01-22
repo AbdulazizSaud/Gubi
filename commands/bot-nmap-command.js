@@ -2,8 +2,11 @@ var req = require('request')
 
 var config = require('../config').config
 
-module.exports.initCommand = function(sender,text,messageChannel,Discord){
-
+module.exports.initCommand = function(text,message,Discord){
+    const author = message.author
+    const voiceChannel = message.member.voiceChannel;
+    const messageChannel = message.channel;
+    if(text.startsWith('nmap')){
 
         ip = text.split('ip:')[1]
         init_message = ['LOOL','Mawahahahhaahha']
@@ -35,6 +38,6 @@ module.exports.initCommand = function(sender,text,messageChannel,Discord){
 
         })
         messageChannel.send(':P');
-
+    }
 
 }
